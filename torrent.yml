@@ -1,31 +1,32 @@
-name: Create torrent
+name: Create Adobe Master Collection Torrent
 on:
   push:
     branches:
       - master
       
 env:
-  name: "Android Studio and SDK Tools"
-  comment: "Android Studio for Windows"
-  url: "https://redirector.gvt1.com/edgedl/android/studio/install/4.1.2.0/android-studio-ide-201.7042882-windows.exe"
-  file_name: "android-studio-ide-201.7042882-windows.exe"
-  piece_size: 19 # Check the README.md for recommended piece size
+  name: "Adobe Master Collection 2019 RUS-ENG v7"
+  comment: "Full Adobe Master Collection 2019 in Russian and English, version 7"
+  url: "https://51-15-165-111.arfiles.net/Adobe%20Master%20Collection%202019%20RUS-ENG%20v7.zip"
+  file_name: "Adobe Master Collection 2019 RUS-ENG v7.zip"
+  piece_size: 20 # Adjust piece size based on your requirements
       
 jobs:
   create:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Install mktorrent
-        run: sudo apt-get install mktorrent
+        run: sudo apt-get install -y mktorrent
         
       - name: Download file
-        run: wget -nv -O "$file_name" "$url"
+        run: wget -nv -O "${{ env.file_name }}" "${{ env.url }}"
         
       - name: Create torrent using mktorrent
-        run: mktorrent -c "$comment" -l $piece_size -o "${name}.torrent" -w "$url" "$file_name"
+        run: mktorrent -c "${{ env.comment }}" -l ${{ env.piece_size }} -o "${{ env.name }}.torrent" -w "${{ env.url }}" "${{ env.file_name }}"
         
       - name: Upload torrent file
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.name }}
-          path: ${{ env.name }}.torrent
+          path: "${{ env.name }}.torrent"
+
